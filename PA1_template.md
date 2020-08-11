@@ -6,7 +6,8 @@ keep_md: true
 output: html_document
 ---
 ### 1. Code for reading in the dataset and/or processing the data
-```{r read}
+
+```r
 ## load packages
 library(RColorBrewer)
 ## set scientific notation standards
@@ -17,7 +18,8 @@ data_noNA <- data[!is.na(data$steps),] ## exclude NA values for 1st part
 ```
 
 ### 2. Histogram of the total number of steps taken each day
-```{r meanSteps} 
+
+```r
 ## mean total steps taken per day
 steps_day <- as.data.frame(sapply(split(data_noNA$steps, data_noNA$date), sum))
 cols <- brewer.pal(n = 6, name = "RdBu")
@@ -27,12 +29,15 @@ hist(steps_day[,1], col = cols, main = "Total number of steps taken per day",
      xlab = "Steps per day", density = 80, breaks =20)
 ```
 
+![plot of chunk meanSteps](figure/meanSteps-1.png)
+
 ### 3. 
-a) Mean number of steps taken each day: `r meanSteps`
-b) Median number of steps taken each day: `r medianSteps`
+a) Mean number of steps taken each day: 10766.1886792
+b) Median number of steps taken each day: 10765
 
 ### 4. Time series plot of the average number of steps taken
-```{r avgPat}
+
+```r
 ## what is the average daily activity pattern
 mean_steps_int <- as.data.frame(sapply(split(data_noNA$steps, data_noNA$interval), mean))
 max_int <- unique(data$interval[which.max(mean_steps_int[,1])])
@@ -43,11 +48,14 @@ plot(mean_steps_int[,1], type="l", col=cols[2],
 axis(1, at=seq(1, nrow(mean_steps_int), len=24), labels=1:24)
 ```
 
-### 5. The 5-minute interval that, on average, contains the maximum number of steps: `r max_int`
+![plot of chunk avgPat](figure/avgPat-1.png)
+
+### 5. The 5-minute interval that, on average, contains the maximum number of steps: 835
 
 ### 6. Code to describe and show a strategy for imputing missing data
 Strategy: Use average step number for the missing step interval 
-```{r imputing}
+
+```r
 ## imputing missing values
 missing <- sum(is.na(data$steps))
 df <- data.frame(intervals = unique(data$interval), meanSteps = mean_steps_int[,1])
@@ -58,7 +66,8 @@ for(i in 1:nrow(copy)){
 ```
 
 ### 7. Histogram of the total number of steps taken each day after missing values are imputed
-``` {r hist2}
+
+```r
 steps_day_copy <- as.data.frame(sapply(split(copy$steps, copy$date), sum))
 meanStepsIM <- mean(steps_day_copy[,1])
 medianStepsIM <- median(steps_day_copy[,1])
@@ -67,12 +76,15 @@ hist(steps_day_copy[,1], col = cols, main = "Total number of steps taken per
      xlab = "Steps per day", density = 80, breaks=20)
 ```
 
+![plot of chunk hist2](figure/hist2-1.png)
+
 # 
-a) Mean number of steps taken each day (after imputing): `r meanStepsIM`  
-b) Median number of steps taken each day (after imputing): `r medianStepsIM`
+a) Mean number of steps taken each day (after imputing): 10766.1886792  
+b) Median number of steps taken each day (after imputing): 10766.1886792
 
 ### 8. Panel plot comparing the average number of steps taken per 5-minute interval across weekdays and weekends
-``` {r}
+
+```r
 ## differences in activity patterns between weekdays and weekends
 weekdys <- c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday")
 copy$days <- factor(weekdays(as.Date(copy$date)) %in% weekdys, 
@@ -90,3 +102,5 @@ plot(mean_steps_int_ends[,1], type="l", col=cols[2],
      main = "Average daily activity pattern \n on weekends", ylab = "Steps", 
      xlab = "5-minute intervals accross day")
 ```
+
+![plot of chunk unnamed-chunk-1](figure/unnamed-chunk-1-1.png)
